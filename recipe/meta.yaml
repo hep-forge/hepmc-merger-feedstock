@@ -1,10 +1,11 @@
 {% set versions = {
-    "0.0.0": "REPLACE_WITH_SHA256"
+    "2.2.0": "ae513c0653afed35c1ec1cb4e209b0dd990b7c658732829168404475bac41c8c"
 } %}
 
 {% set version = environ.get('COMMIT_VERSION', None) %}
 {% set version = version or versions.keys()|first %}
 {% set version = version|string %}
+{% set root_tag = (root or '')|replace('.', '') %}
 
 {% set name = environ.get('ANACONDA_PACKAGE', 'hepmc-merger')|string|lower %}
 
@@ -13,36 +14,44 @@ package:
   version: {{ environ.get('ANACONDA_VERSION', version)|replace("-", ".") }}
 
 source:
-  url: "https://github.com/eic/HEPMC_Merger/archive/refs/tags/{{ version }}.tar.gz"   # TODO: confirm upstream's actual tag/tarball naming
+  url: "https://github.com/eic/HEPMC_Merger/archive/refs/tags/v{{ version }}.tar.gz"
   {% if versions.get(version, None) %}
   sha256: {{ versions.get(version) }}
   {% endif %}
 
 build:
   number: 0
-  run_exports:
-    - {{ pin_subpackage(name, max_pin="x.x.x") }}
+  string: "root{{ root_tag }}"
+  # CLI tool, not a library -- nothing links against it, so no run_exports.
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ stdlib('c') }}
+    - root {{ root }}.*
     - cmake
     - make
   host:
-    # TODO: library dependencies
+    - root {{ root }}.*
+    - hepmc>=3.2.6 root{{ root_tag }}   # needs HepMC3's rootIO component (HepMC3::rootIO)
   run:
-    # TODO: runtime dependencies
+    - root {{ root }}.*
+    - hepmc>=3.2.6 root{{ root_tag }}
 
 test:
   commands:
-    - echo "TODO: a real smoke test"
+    - test -x "${PREFIX}/bin/SignalBackgroundMerger"
 
 about:
   home: "https://github.com/eic/HEPMC_Merger"
   license: "NOASSERTION"
   summary: "Merges signal and background events from HepMC3 files"
+  description: |
+    SignalBackgroundMerger combines signal and background event samples
+    from separate HepMC3 files into pileup-merged events, used in EIC
+    detector simulation campaigns. Requires HepMC3 built with ROOT I/O
+    support (HepMC3::rootIO) and ROOT itself.
 
 extra:
   recipe-maintainers:
