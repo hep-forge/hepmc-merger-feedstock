@@ -15,8 +15,8 @@ Merges signal and background events from HepMC3 files
 
 | Architecture | Latest published |
 |--------------|------------------|
-| linux-amd64 (`linux-64`) | ✅ `2.2.0` |
-| linux-arm64 (`linux-aarch64`) | ✅ `2.2.0` |
+| linux-amd64 (`linux-64`) | ✅ `2.4.0` |
+| linux-arm64 (`linux-aarch64`) | ✅ `2.4.0` |
 
 _As of the last feedstock render; the badges above are live._
 
