@@ -4,7 +4,12 @@ set -e
 mkdir -p build
 cd build
 
-cmake .. \
+EXTRA_ARGS=()
+if [[ "$(uname)" == "Darwin" ]]; then
+  EXTRA_ARGS+=(-DCMAKE_PROJECT_INCLUDE="${RECIPE_DIR}/hepmc3-rootio-macos.cmake")
+fi
+
+cmake .. "${EXTRA_ARGS[@]}" \
   -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
   -DCMAKE_BUILD_TYPE=Release \
   -DHepMC3_DIR="${PREFIX}/share/HepMC3/cmake"
