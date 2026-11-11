@@ -4,10 +4,9 @@ set -e
 mkdir -p build
 cd build
 
-EXTRA_ARGS=()
-if [[ "$(uname)" == "Darwin" ]]; then
-  EXTRA_ARGS+=(-DCMAKE_PROJECT_INCLUDE="${RECIPE_DIR}/hepmc3-rootio-macos.cmake")
-fi
+# conda-forge's HepMC3Config.cmake does not load the rootIO targets: see
+# hepmc3-rootio.cmake
+EXTRA_ARGS=(-DCMAKE_PROJECT_INCLUDE="${RECIPE_DIR}/hepmc3-rootio.cmake")
 
 cmake .. "${EXTRA_ARGS[@]}" \
   -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
